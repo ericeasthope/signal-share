@@ -1,8 +1,5 @@
 import React, { Component } from 'react';
 import AudioVisualiser from './AudioVisualiser';
-import { YArray } from "yjs/types/YArray";
-import { WebsocketProvider } from "yjs/provider/websocket";
-import { DomBinding } from "yjs/bindings/dom";
 
 class AudioAnalyser extends Component {
   constructor(props) {
@@ -12,12 +9,6 @@ class AudioAnalyser extends Component {
   }
 
   componentDidMount() {
-    // const provider = new WebsocketProvider("ws://localhost:3000");
-    const provider = new WebsocketProvider("wss://signal-share.herokuapp.com/");
-    const ydocument = provider.get("AudioVisualiser");
-    const type = ydocument.define("AudioVisualizer", YArray);
-    new DomBinding(type, this.refs.share.canvas.current);
-
     this.audioContext = new (window.AudioContext ||
       window.webkitAudioContext)();
     this.analyser = this.audioContext.createAnalyser();
@@ -40,7 +31,7 @@ class AudioAnalyser extends Component {
   }
 
   render() {
-    return <AudioVisualiser ref="share" audioData={this.state.audioData} />;
+    return <AudioVisualiser audioData={this.state.audioData} />;
   }
 }
 

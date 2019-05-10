@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import { YXmlElement } from "yjs/types/YXmlElement";
+import { WebsocketProvider } from "yjs/provider/websocket";
+import { DomBinding } from "yjs/bindings/dom.js";
 
 class AudioVisualiser extends Component {
   constructor(props) {
@@ -6,7 +9,12 @@ class AudioVisualiser extends Component {
     this.canvas = React.createRef();
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    const provider = new WebsocketProvider("wss://signal-share.herokuapp.com/");
+    const ydocument = provider.get("dom");
+    const type = ydocument.define("xml", YXmlElement);
+    new DomBinding(type, this.canvas.current);
+  }
 
   componentDidUpdate() {
     this.draw();
