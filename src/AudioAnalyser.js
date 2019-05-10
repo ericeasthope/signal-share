@@ -12,7 +12,8 @@ class AudioAnalyser extends Component {
   }
 
   componentDidMount() {
-    const provider = new WebsocketProvider("ws://localhost:3000"); // change to wss://yjs-react-example.herokuapp.com/
+    // const provider = new WebsocketProvider("ws://localhost:3000");
+    const provider = new WebsocketProvider("wss://signal-share.herokuapp.com/");
     const ydocument = provider.get("AudioVisualiser");
     const type = ydocument.define("AudioVisualizer", YArray);
     new DomBinding(type, this.refs.share.canvas.current);
