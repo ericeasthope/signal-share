@@ -1,11 +1,16 @@
 {
   "name": "signalshare",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "private": true,
   "dependencies": {
+    "express": "^4.16.4",
+    "express-ws": "^4.0.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-scripts": "3.0.1"
+    "react-scripts": "3.0.1",
+    "socket.io-client": "^2.2.0",
+    "y-array": "^10.1.4",
+    "yjs": "^13.0.0-78"
   },
   "scripts": {
     "start": "react-scripts start",
