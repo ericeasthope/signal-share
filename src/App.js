@@ -43,8 +43,7 @@ class App extends Component {
         {this.state.audio ? <AudioAnalyser audio={this.state.audio} /> : ''}
 
         <h1>.</h1>
-        <YjsTextArea />
-        <p>The text areas are synchronized between hosts.</p>
+          <YjsTextArea />
       </div>
     );
   }
