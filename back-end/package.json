@@ -1,0 +1,12 @@
+{
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "Eric Easthope",
+  "license": "MIT",
+  "dependencies": {
+    "lib0": "^0.2.40",
+    "ws": "^7.4.3"
+  }
+}

@@ -5,6 +5,8 @@
   },
   "main": "index.js",
   "private": true,
+  "author": "Eric Easthope",
+  "license": "MIT",
   "dependencies": {
     "d3": "^6.5.0",
     "webpack": "^5.24.2",
