@@ -1,15 +1,19 @@
 import * as Y from "yjs";
 import { WebrtcProvider } from "y-webrtc";
+import { WebsocketProvider } from "y-websocket";
 import * as d3 from "d3";
 
 const ydoc = new Y.Doc();
 
-const provider = new WebrtcProvider("testest", ydoc, {
-  signaling: ["wss://whispering-lowlands-96095.herokuapp.com"],
+console.log(
+  navigator.mediaDevices.getUserMedia({ audio: false, video: false })
+);
+
+const provider = new WebrtcProvider("hello-this-is-test-yes", ydoc, {
+  signaling: ["wss://signaling.yjs.dev", "wss://signal-share.herokuapp.com"],
 });
 
-// const yarray = ydoc.get('array', Y.Array);
-const yarray = ydoc.get("testest", Y.Array);
+const yarray = ydoc.getArray("array");
 
 provider.on("synced", (synced) => {
   // NOTE: This is only called when a different browser connects to this client
