@@ -1,17 +1,47 @@
 import * as Y from "yjs";
 import { WebrtcProvider } from "y-webrtc";
-import { WebsocketProvider } from "y-websocket";
 import * as d3 from "d3";
 
 const ydoc = new Y.Doc();
 
-console.log(
-  navigator.mediaDevices.getUserMedia({ audio: false, video: false })
-);
-
 const provider = new WebrtcProvider("hello-this-is-test-yes", ydoc, {
   signaling: ["wss://signaling.yjs.dev", "wss://signal-share.herokuapp.com"],
 });
+
+navigator.mediaDevices
+  .getUserMedia({ audio: true, video: false })
+  .then((stream) => {
+    const context = new AudioContext();
+    const source = context.createMediaStreamSource(stream);
+    const processor = context.createScriptProcessor(256, 1, 1);
+
+    source.connect(processor);
+    processor.connect(context.destination);
+
+    processor.onaudioprocess = function (e) {
+      var buffer = e.inputBuffer.getChannelData(0);
+      var out = e.outputBuffer.getChannelData(0);
+
+      var amp = d3.max(buffer, (b, i) => {
+        // Write input samples to output unchanged
+        out[i] = b;
+        return Math.abs(b);
+      });
+
+      if (amp.toFixed(2) >= 0.1) {
+        yarray.push([amp.toFixed(2)]);
+
+        d3.select("body")
+          .interrupt()
+          .transition()
+          .style("background-color", d3.interpolateViridis(amp * 2))
+          .duration(250)
+          .transition()
+          .duration(1000)
+          .style("background-color", "#000");
+      }
+    };
+  });
 
 const yarray = ydoc.getArray("array");
 
@@ -25,10 +55,13 @@ provider.on("synced", (synced) => {
 
 yarray.observeDeep(() => {
   // console.log("yarray updated: ", yarray.toJSON());
-  console.log(".");
+  var amp = yarray.slice(-1)[0];
+  console.log(".", amp);
+
   d3.select("body")
+    .interrupt()
     .transition()
-    .style("background-color", "#add8e6")
+    .style("background-color", d3.interpolateViridis(amp * 2))
     .duration(250)
     .transition()
     .duration(1000)
