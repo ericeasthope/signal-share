@@ -8,9 +8,18 @@ const provider = new WebrtcProvider("hello-this-is-test-yes", ydoc, {
   signaling: ["wss://signaling.yjs.dev", "wss://signal-share.herokuapp.com"],
 });
 
+const amplitudeScale = d3.scaleLinear().domain([0.5, 1.0]).range([0, 1]);
+
+console.log("hello");
+
 navigator.mediaDevices
   .getUserMedia({ audio: true, video: false })
   .then((stream) => {
+    window.AudioContext =
+      window.AudioContext || // Default
+      window.webkitAudioContext || // Safari and old versions of Chrome
+      false;
+
     const context = new AudioContext();
     const source = context.createMediaStreamSource(stream);
     const processor = context.createScriptProcessor(256, 1, 1);
@@ -24,17 +33,20 @@ navigator.mediaDevices
 
       var amp = d3.max(buffer, (b, i) => {
         // Write input samples to output unchanged
-        out[i] = b;
+        // out[i] = b;
         return Math.abs(b);
       });
 
-      if (amp.toFixed(2) >= 0.1) {
+      if (amp.toFixed(2) >= 0.5) {
         yarray.push([amp.toFixed(2)]);
 
         d3.select("body")
           .interrupt()
           .transition()
-          .style("background-color", d3.interpolateViridis(amp * 2))
+          .style(
+            "background-color",
+            d3.interpolateViridis(amplitudeScale(amp.toFixed(2)))
+          )
           .duration(250)
           .transition()
           .duration(1000)
@@ -61,7 +73,7 @@ yarray.observeDeep(() => {
   d3.select("body")
     .interrupt()
     .transition()
-    .style("background-color", d3.interpolateViridis(amp * 2))
+    .style("background-color", d3.interpolateViridis(amplitudeScale(amp)))
     .duration(250)
     .transition()
     .duration(1000)
