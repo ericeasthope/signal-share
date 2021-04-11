@@ -2,15 +2,44 @@ import * as Y from "yjs";
 import { WebrtcProvider } from "y-webrtc";
 import * as d3 from "d3";
 
+// Make new shared Y.js document
 const ydoc = new Y.Doc();
 
-const provider = new WebrtcProvider("hello-this-is-test-yes", ydoc, {
+// Configure WebRTC provider to use signalling servers
+const provider = new WebrtcProvider("abstract-test-case", ydoc, {
   signaling: ["wss://signaling.yjs.dev", "wss://signal-share.herokuapp.com"],
 });
 
+// Initialize shared Y.js array
+const yarray = ydoc.getArray("array");
+
+// Use default synced message
+provider.on("synced", (synced) => {
+  // NOTE: This is only called when a different browser connects to this client
+  // Windows of the same browser communicate directly with each other
+  // Although this behavior might be subject to change.
+  // It is better not to expect a synced event when using y-webrtc
+  console.log("synced!", synced);
+});
+
+const body = d3.select("body");
 const amplitudeScale = d3.scaleLinear().domain([0.5, 1.0]).range([0, 1]);
 
-console.log("hello");
+// Do this every time `yarray` updates
+yarray.observeDeep(() => {
+  // Get last amplitude from shared array
+  var amp = yarray.slice(-1)[0];
+  // console.log(".", amp);
+
+  d3.select("body")
+    .interrupt()
+    .transition()
+    .style("background-color", d3.interpolateViridis(amplitudeScale(amp)))
+    .duration(250)
+    .transition()
+    .duration(1000)
+    .style("background-color", "#000");
+});
 
 navigator.mediaDevices
   .getUserMedia({ audio: true, video: false })
@@ -55,39 +84,6 @@ navigator.mediaDevices
     };
   });
 
-const yarray = ydoc.getArray("array");
-
-provider.on("synced", (synced) => {
-  // NOTE: This is only called when a different browser connects to this client
-  // Windows of the same browser communicate directly with each other
-  // Although this behavior might be subject to change.
-  // It is better not to expect a synced event when using y-webrtc
-  console.log("synced!", synced);
-});
-
-yarray.observeDeep(() => {
-  // console.log("yarray updated: ", yarray.toJSON());
-  var amp = yarray.slice(-1)[0];
-  console.log(".", amp);
-
-  d3.select("body")
-    .interrupt()
-    .transition()
-    .style("background-color", d3.interpolateViridis(amplitudeScale(amp)))
-    .duration(250)
-    .transition()
-    .duration(1000)
-    .style("background-color", "#000");
-});
-
 window.pushArray = () => {
   yarray.push([""]);
 };
-
-d3.select("body")
-  .transition()
-  .style("background-color", "#333")
-  .duration(250)
-  .transition()
-  .duration(1000)
-  .style("background-color", "#000");
