@@ -26,12 +26,24 @@ const body = d3.select("body");
 const width = body.node().getBoundingClientRect().width;
 const height = body.node().getBoundingClientRect().height;
 
+const marker = d3
+  .select("body")
+  .append("span")
+  .style("width", "42px")
+  .style("height", "42px")
+  .style("position", "absolute")
+  .style("background-color", "red")
+  .style("z-index", 1)
+  .style("opacity", 0);
+
 // Do this every time `yarray` updates
 yarray.observeDeep(() => {
   // Destructure last (x,y,scale) tuple from shared array
   var [x, y, scale] = yarray.slice(-3);
 
   // console.log(".", coords);
+
+  addTimedMarker();
 
   // Add drop
   $("div").ripples("drop", x * width, y * height, scale * 42, 0.01);
@@ -115,3 +127,8 @@ navigator.mediaDevices
       }
     };
   });
+
+const addTimedMarker = () => {
+  marker.style("opacity", 1);
+  marker.interrupt().transition().delay(250).duration(1000).style("opacity", 0);
+};

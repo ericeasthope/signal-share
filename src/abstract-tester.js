@@ -6,7 +6,7 @@ import * as d3 from "d3";
 const ydoc = new Y.Doc();
 
 // Configure WebRTC provider to use signaling servers
-const provider = new WebrtcProvider("contextual-test-case", ydoc, {
+const provider = new WebrtcProvider("abstract-test-case", ydoc, {
   signaling: ["wss://signaling.yjs.dev", "wss://signal-share.herokuapp.com"],
 });
 
@@ -22,64 +22,89 @@ provider.on("synced", (synced) => {
   console.log("synced!", synced);
 });
 
-const body = d3.select("body");
-const width = body.node().getBoundingClientRect().width;
-const height = body.node().getBoundingClientRect().height;
+const div = d3.select("div");
+const width = div.node().getBoundingClientRect().width;
+const height = div.node().getBoundingClientRect().height;
+
+const marker = d3
+  .select("body")
+  .append("span")
+  .style("width", "42px")
+  .style("height", "42px")
+  .style("position", "absolute")
+  .style("background-color", "red")
+  .style("z-index", 1)
+  .style("opacity", 0);
+
+// Initialize timestamp tracking variable
+var timestamp = null;
 
 // Do this every time `yarray` updates
 yarray.observeDeep(() => {
-  // Destructure last (x,y,scale) tuple from shared array
-  var [x, y, scale] = yarray.slice(-3);
+  // Destructure last value from shared array
+  var [val] = yarray.slice(-1);
+  console.log(".", val);
 
-  // console.log(".", coords);
+  addTimedMarker();
 
-  // Add drop
-  $("div").ripples("drop", x * width, y * height, scale * 42, 0.01);
-});
-
-// Configure rippling
-$("div").ripples({
-  resolution: 256,
-  interactive: false,
+  if (val > 0.5) {
+    div
+      .interrupt()
+      .transition()
+      .duration(250)
+      .style("background-color", d3.interpolateViridis(val))
+      .transition()
+      .delay(250)
+      .duration(1000)
+      .style("background-color", "#000");
+  }
+  else {
+    div
+      .interrupt()
+      .style("background-color", d3.interpolateViridis(val))
+      .transition()
+      .delay(250)
+      .duration(1000)
+      .style("background-color", "#000");
+  }
 });
 
 /*
-// Add automatic drop every 10 seconds
+// Add automatic colour flash every 10 seconds
 setInterval(function () {
-  var x = Math.random();
-  var y = Math.random();
-  yarray.push([x, y, 1]);
+  yarray.push([0]);
 }, 10000);
 */
 
 // Trigger WebRTC event during cursor clicks and movements
-body
+div
   .on("click", (event) => {
     event.preventDefault();
-    let x = (event.x / width).toFixed(2);
-    let y = (event.y / height).toFixed(2);
-    yarray.push([x, y, 1]);
+    timestamp = event.timeStamp;
+    yarray.push([(event.timeStamp - timestamp) / 2000]);
   })
   .on("mousemove", (event) => {
-    let x = (event.x / width).toFixed(2);
-    let y = (event.y / height).toFixed(2);
-    yarray.push([x, y, 1]);
+    if (event.timeStamp - timestamp > 1000) timestamp = null;
+    else {
+      yarray.push([(event.timeStamp - timestamp) / 2000]);
+    }
   });
 
 // Trigger WebRTC event during touch
-body
+div
   .on("touchstart", (event) => {
     event.preventDefault();
-    const t = d3.pointers(event, this);
-    let x = (t[0][0] / width).toFixed(2);
-    let y = (t[0][1] / height).toFixed(2);
-    yarray.push([x, y, 1]);
+    timestamp = event.timeStamp;
+    yarray.push([(event.timeStamp - timestamp) / 2000]);
   })
   .on("touchmove", function (event) {
-    const t = d3.pointers(event, this);
-    let x = (t[0][0] / width).toFixed(2);
-    let y = (t[0][1] / height).toFixed(2);
-    yarray.push([x, y, 1]);
+    if (event.timeStamp - timestamp > 1000) timestamp = null;
+    else {
+      yarray.push([(event.timeStamp - timestamp) / 2000]);
+    }
+  })
+  .on("touchend", function (event) {
+    timestamp = null;
   });
 
 // Get audio input
@@ -111,7 +136,12 @@ navigator.mediaDevices
 
       // Add drop if amplitude is above threshold
       if (amp.toFixed(2) >= 0.5) {
-        yarray.push([0.5, 1, 5]);
+        yarray.push([amp.toFixed(2)]);
       }
     };
   });
+
+const addTimedMarker = () => {
+  marker.style("opacity", 1);
+  marker.interrupt().transition().delay(250).duration(1000).style("opacity", 0);
+};

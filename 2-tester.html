@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      body,
+      html {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background-color: #000;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        touch-action: none;
+      }
+
+      div {
+        border: 10px solid #000;
+        background-image: url(./img/tiling2-modified-blurred.jpeg);
+        background-size: 100%;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery.ripples/0.5.3/jquery.ripples.min.js"
+      integrity="sha512-zuZ5wVszlsRbRF/vwXD0QS/tHzBYHFzCD/BT0lI3yrWhNZFWDkkF3KPEY//WTanqxwPdZkskQ+xZo0rnfHBc5A=="
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div></div>
+  </body>
+  <script src="dist/contextualTester.js"></script>
+</html>

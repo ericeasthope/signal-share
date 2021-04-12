@@ -35,13 +35,25 @@ yarray.observeDeep(() => {
   var [val] = yarray.slice(-1);
   // console.log(".", val);
 
-  div
-    .interrupt()
-    .style("background-color", d3.interpolateViridis(val))
-    .transition()
-    .delay(250)
-    .duration(1000)
-    .style("background-color", "#000");
+  if (val > 0.5) {
+    div
+      .interrupt()
+      .transition()
+      .duration(250)
+      .style("background-color", d3.interpolateViridis(val))
+      .transition()
+      .delay(250)
+      .duration(1000)
+      .style("background-color", "#000");
+  } else {
+    div
+      .interrupt()
+      .style("background-color", d3.interpolateViridis(val))
+      .transition()
+      .delay(250)
+      .duration(1000)
+      .style("background-color", "#000");
+  }
 });
 
 /*
@@ -109,8 +121,8 @@ navigator.mediaDevices
         return Math.abs(b);
       });
 
-      // Add drop if amplitude is above threshold
-      if (amp.toFixed(2) >= 0.4) {
+      // Add colour flash if amplitude is above threshold
+      if (amp.toFixed(2) >= 0.5) {
         yarray.push([amp.toFixed(2)]);
       }
     };
