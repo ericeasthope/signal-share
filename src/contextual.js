@@ -5,7 +5,7 @@ import * as d3 from "d3";
 // Make new shared Y.js document
 const ydoc = new Y.Doc();
 
-// Configure WebRTC provider to use signalling servers
+// Configure WebRTC provider to use signaling servers
 const provider = new WebrtcProvider("contextual-test-case", ydoc, {
   signaling: ["wss://signaling.yjs.dev", "wss://signal-share.herokuapp.com"],
 });
@@ -43,12 +43,14 @@ $("div").ripples({
   interactive: false,
 });
 
+/*
 // Add automatic drop every 10 seconds
 setInterval(function () {
   var x = Math.random();
   var y = Math.random();
   yarray.push([x, y, 1]);
 }, 10000);
+*/
 
 // Trigger WebRTC event during cursor clicks and movements
 body
@@ -108,7 +110,7 @@ navigator.mediaDevices
       });
 
       // Add drop if amplitude is above threshold
-      if (amp.toFixed(2) >= 0.5) {
+      if (amp.toFixed(2) >= 0.4) {
         yarray.push([0.5, 1, 5]);
       }
     };
