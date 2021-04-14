@@ -81,12 +81,12 @@ div
   .on("click", (event) => {
     event.preventDefault();
     timestamp = event.timeStamp;
-    yarray.push([(event.timeStamp - timestamp) / 2000]);
+    yarray.push([(event.timeStamp - timestamp) / 3000]);
   })
   .on("mousemove", (event) => {
     if (event.timeStamp - timestamp > 1000) timestamp = null;
     else {
-      yarray.push([(event.timeStamp - timestamp) / 2000]);
+      yarray.push([(event.timeStamp - timestamp) / 3000]);
     }
   });
 
@@ -95,12 +95,12 @@ div
   .on("touchstart", (event) => {
     event.preventDefault();
     timestamp = event.timeStamp;
-    yarray.push([(event.timeStamp - timestamp) / 2000]);
+    yarray.push([(event.timeStamp - timestamp) / 3000]);
   })
   .on("touchmove", function (event) {
     if (event.timeStamp - timestamp > 1000) timestamp = null;
     else {
-      yarray.push([(event.timeStamp - timestamp) / 2000]);
+      yarray.push([(event.timeStamp - timestamp) / 3000]);
     }
   })
   .on("touchend", function (event) {
@@ -135,7 +135,7 @@ navigator.mediaDevices
       });
 
       // Add drop if amplitude is above threshold
-      if (amp.toFixed(2) >= 0.5) {
+      if (amp.toFixed(2) >= 0.33) {
         yarray.push([amp.toFixed(2)]);
       }
     };

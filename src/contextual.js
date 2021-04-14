@@ -110,7 +110,7 @@ navigator.mediaDevices
       });
 
       // Add drop if amplitude is above threshold
-      if (amp.toFixed(2) >= 0.5) {
+      if (amp.toFixed(2) >= 0.33) {
         yarray.push([0.5, 1, 5]);
       }
     };
